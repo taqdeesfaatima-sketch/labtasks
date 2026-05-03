@@ -1,29 +1,14 @@
-#include <iostream>
+#include<iostream>
 using namespace std;
 
-string fire(char grid[5][5], string pos)
-{
-    int row = pos[1]-'1';
-    int col = pos[0]-'A';
-
-    if(grid[row][col]=='*')
-        return "BOOM";
-    else
-        return "splash";
+void swapVariables(int &x,int &y){
+    int temp=x;
+    x=y;
+    y=temp;
 }
+int main(){
+    int x=20,y=40;
 
-int main()
-{
-    char grid[5][5] = {
-        {'.','.','.','*','*'},
-        {'.','*','.','.','.'},
-        {'.','*','.','.','.'},
-        {'.','*','.','.','.'},
-        {'.','.','*','*','.'}
-    };
-
-    string input;
-    cin>>input;
-
-    cout<<fire(grid,input);
+    swapVariables(x,y);
+    cout<<"Enter x & y:"<<x<<" "<<y<<endl;
 }
