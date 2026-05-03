@@ -1,20 +1,30 @@
-#include<iostream>
+#include <iostream>
 using namespace std;
 
-void reverseArray(int arr[], int n){
-    for(int i=0;i<n/2;i++)
-    int *ptr=arr;
-
+bool isGoalScored(char field[7][16])
+{
+    for(int i=0;i<7;i++)
+    {
+        for(int j=0;j<16;j++)
+        {
+            if(field[i][j]=='0')
+            {
+                if(j>5 && j<10 && i<3)
+                    return true;
+            }
+        }
+    }
+     return false;
 }
-int main(){
-    int n;
-    cout<<"Enter array element:";
-    cin>>n;
-    int arr[100];
-    for(int i=0;i<n;i++)
-    cin>>arr[i];
-    reverseArray(arr,n);
-    cout<<"Reversed array(arr,n)";
-    for(int i=0;i<n;i++)
-    cout<<arr[i]<<" ";
+
+int main()
+{
+    char field[7][16] = {0};
+
+    // manually fill if needed
+
+    if(isGoalScored(field))
+        cout<<"Goal!";
+    else
+        cout<<"No Goal";
 }

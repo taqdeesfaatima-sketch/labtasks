@@ -1,8 +1,3 @@
-#include<iostream>
-using namespace std;
-
-void printCars(int cars[][5],int rowSize);
-
 main()
 {
     const int rowSize=5;
@@ -24,5 +19,3 @@ void printCars(int cars[][5],int rowSize)
             cout<<cars[row][col]<<"\t";
         }
         cout<<endl;
-    }
-}
