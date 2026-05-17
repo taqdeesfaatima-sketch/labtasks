@@ -1,11 +1,15 @@
 #include <iostream>
+#include<fstream>
 #include <conio.h>
 using namespace std;
+      
       const int Max=1000;
       string productName[Max], category[Max], supplierName[Max], expiryDate[Max], status[Max], shopName, shopAddress, shopPhone, shopEmail;
       int quantity[Max], soldQty[Max], index_ = 0;
       float buyPrice[Max], sellPrice[Max], totalSale[Max];
       // Function Declarations
+      void saveData();
+      void loadData();
       void sortProductAZ();
       bool adminLogin();
       void adminMenu();
@@ -30,9 +34,66 @@ using namespace std;
       void mostExpensiveProduct();
       void shopContactInfo();
 
+      void saveData()
+      {
+       ofstream file("products.txt");
+       if(!file)
+       {
+        cout<<"File don't save!"<<endl;
+        return;
+       } 
+
+       file<<index_ <<"\n";
+       for(int i=0; i<index_; i++)
+       {
+        file<<productName[i]   <<"\n";
+        file<<category[i]      <<"\n";
+        file<<quantity[i]      <<"\n";
+        file<<buyPrice[i]      <<"\n";
+        file<<sellPrice[i]     <<"\n";
+        file<<supplierName[i]  <<"\n";
+        file<<expiryDate[i]    <<"\n";
+        file<<status[i]        <<"\n";
+        file<<soldQty[i]       <<"\n";
+        file<<totalSale[i]     <<"\n";
+       }
+       file.close();
+       cout<<"Data saved! "<<endl;
+      }
+
+      void loadData()
+      {
+        ifstream file("products.txt");
+        if(!file)
+        {
+          cout<<"No old data"<<endl;
+          return;
+        }
+
+        file>>index_;
+        for(int i=0; i<index_; i++)
+        {
+          file.ignore();
+          getline(file,productName[i]);
+          getline(file,category[i]);
+          file>>quantity[i];
+          file>>buyPrice[i];
+          file>>sellPrice[i];
+          file.ignore();
+          getline(file,supplierName[i]);
+          getline(file,expiryDate[i]);
+          getline(file,status[i]);
+          file>>soldQty[i];
+          file>>totalSale[i];
+
+        }
+        file.close();
+        cout<<"Old data loaded!("<<index_<<"products)"<<endl;
+      }
+
       void sortProductAZ()
       {
-        for(int i=0;i<index_;i++)
+        for(int i=0;i<index_ -1;i++)
         {
           for(int j=0;j<index_ -i-1;j++)
           {
@@ -65,7 +126,9 @@ using namespace std;
       {
         cout<<"\n Press any key to continue...";
         getch();
+        system("pause");
       }
+    
       // ============================================================
       //                  ADMIN FUNCTIONS
       // ============================================================
@@ -105,44 +168,47 @@ using namespace std;
        cout<<"============================================================================="<<endl;
        cout<<"                             ALL PRODUCTS(A-Z SORTED)                        "<<endl;
        cout<<"============================================================================="<<endl;
-       cout << "No.\tName\t\tCategory\tQty\tBuy\tSell\tSupplier\tExpiry\t\tStatus" << endl;
+       cout << "No.\tName\t\tCategory\tQty\tBuy\tSell\tSupplier\tExpiry\t\tStatus\n";
          for(int i=0;i<index_;i++)
           {
             if (productName[i] != "") 
          {
-            cout << i + 1 << "\t" << productName[i] << "\t\t" << category[i] << "\t" << quantity[i] << "\t" << buyPrice[i] << "\t" << sellPrice[i] << "\t" << supplierName[i] << "\t" << expiryDate[i] << "\t" << status[i] << endl;
+            cout << i + 1 << "\t" << productName[i] << "\t\t" << category[i] << "\t" << quantity[i] << "\t" << buyPrice[i] << "\t" << sellPrice[i] << "\t" << supplierName[i] << "\t" << expiryDate[i] << "\t" << status[i] << "\n";
             cout<<"\nPress any key to return to Admin Menu...";
             getch();
       
          }
         }
+            cout<<"\nPress any key to return to Admin Menu...";
+            getch();
        }
    
          //----Option 2----
          void searchProductAdmin()
          {
+
           cout<<"Enter product name to search:";
          string name;
          cin>>name;
 
-         int idx=findProduct(name);
-         if(idx==-1)
+         int index_=findProduct(name);
+         if(index_==-1)
          {
           cout<<"Product not found."<<endl;
           return;
          }
          cout<<"\n ---Product Record---"<<endl;
          cout << "\n  --- Product Record ---" << endl; 
-         cout << "  Name      : " << productName[idx]<< endl;
-         cout << "  Category  : " << category[idx] << endl;
-         cout << "  Quantity  : " << quantity[idx] << endl;
-         cout << "  Buy Price : Rs. " << buyPrice[idx] << endl;
-         cout << "  Sell Price: Rs. " << sellPrice[idx] << endl;
-         cout << "  Supplier  : " << supplierName[idx] << endl;
-         cout << "  Expiry    : " << expiryDate[idx] << endl;
-         cout << "  Status    : " << status[idx] << endl;
-         cout << "  Sold Qty  : " << soldQty[idx] << endl;
-         cout << "  Total Sale: Rs. " << totalSale[idx] << endl;
+         cout << "  Name      : " << productName[index_]<< endl;
+         cout << "  Category  : " << category[index_] << endl;
+         cout << "  Quantity  : " << quantity[index_] << endl;
+         cout << "  Buy Price : Rs. " << buyPrice[index_] << endl;
+         cout << "  Sell Price: Rs. " << sellPrice[index_] << endl;
+         cout << "  Supplier  : " << supplierName[index_] << endl;
+         cout << "  Expiry    : " << expiryDate[index_] << endl;
+         cout << "  Status    : " << status[index_] << endl;
+         cout << "  Sold Qty  : " << soldQty[index_] << endl;
+         cout << "  Total Sale: Rs. " << totalSale[index_] << endl;
          
          }
          
@@ -178,7 +244,9 @@ using namespace std;
         status[index_]        = (qty <= 10) ? "Low Stock" : "Available";
         index_++;
         cout<<"\n Product added successfully!"<<endl;
+        saveData();
          }
+        
           
          //----Option 4----
          void updateProduct()
@@ -194,10 +262,10 @@ using namespace std;
          }
          
          cout<<"\n---Old Record---"<<endl;
-         cout<<"Name:"<<productName[idx]
-             <<"|Qty:"<<quantity[idx]
-             <<"|Sell Price:"<<sellPrice[idx]
-             <<"|Status:"<<status[idx]<<endl;
+         cout<<"Name:"<<productName[index_]
+             <<"|Qty:"<<quantity[index_]
+             <<"|Sell Price:"<<sellPrice[index_]
+             <<"|Status:"<<status[index_]<<endl;
          cout<<"\n Enter new details:"<<endl;
          cout<<"New Name       :"; string newName;     cin>>newName;
          cout<<"New Category   :"; string newCat ;     cin>>newCat ;
@@ -206,16 +274,17 @@ using namespace std;
          cout<<"New Sell Price :"; float  newSell;     cin>>newSell;
          cout<<"New Supplier   :"; string newSupplier; cin>>newSupplier;
          cout<<"New Expiry Date:"; string newExpiry;   cin>>newExpiry;
-         productName[idx]  = newName;
-         category[idx]     = newCat;
-         quantity[idx]     = newQty;
-         buyPrice[idx]     = newBuy;
-         sellPrice[idx]    = newSell;
-         supplierName[idx] = newSupplier;
-         expiryDate[idx]   = newExpiry;
-         status[idx]       = (newQty <= 10) ? "Low Stock" : "Available"; 
+         productName[index_]  = newName;
+         category[index_]     = newCat;
+         quantity[index_]     = newQty;
+         buyPrice[index_]     = newBuy;
+         sellPrice[index_]    = newSell;
+         supplierName[index_] = newSupplier;
+         expiryDate[index_]   = newExpiry;
+         status[index_]       = (newQty <= 10) ? "Low Stock" : "Available"; 
          
          cout<<"\n Record updated successfully!"<<endl;
+         saveData();
          }
         
          
@@ -225,61 +294,66 @@ using namespace std;
          cout<<"Enter product name to delete:";
          string name;
          cin>>name;
-         int idx=findProduct(name);
-         if(idx==-1)
+         int index_=findProduct(name);
+         if(index_==-1)
          {
          cout<<"Product not found."<<endl;
          return;
          }
-          productName[idx]  = "";
-          category[idx]     = "";
-          quantity[idx]     = 0;
-          buyPrice[idx]     = 0;
-          sellPrice[idx]    = 0;
-          supplierName[idx] = "";
-          expiryDate[idx]   = "";
-          totalSale[idx]    = 0;
-          soldQty[idx]      = 0;
-          status[idx]       = "";
+          productName[index_]  = "";
+          category[index_]     = "";
+          quantity[index_]     = 0;
+          buyPrice[index_]     = 0;
+          sellPrice[index_]    = 0;
+          supplierName[index_] = "";
+          expiryDate[index_]   = "";
+          totalSale[index_]    = 0;
+          soldQty[index_]      = 0;
+          status[index_]       = "";
           cout << "  Product '" << name << "' deleted successfully." << endl;
-        }
+          saveData();
           
+        }
+        
           //----Option 6----
           void sellProduct()
           {
           cout<<"Enter product name to sell:";
           string name;
           cin>>name;
-          int idx=findProduct(name);
-          if(idx==-1)
+          int index_=findProduct(name);
+          if(index_==-1)
           {
           cout<<"Product not found."<<endl;
           return;
           }
 
-          cout<<"Available Quantity:"<<quantity[idx]<<endl;
+          cout<<"Available Quantity:"<<quantity[index_]<<endl;
           cout<<"Enter quantity to sell:";
           int sellQty;
           cin>>sellQty;
 
-          if(sellQty>quantity[idx])
+          if(sellQty>quantity[index_])
           {
           cout<<"Error! Not enough stock."<<endl;
+          return;
           }
          
-          quantity[idx] -=sellQty;
-          soldQty[idx]  +=sellQty;
-          totalSale[idx]+=sellQty * sellPrice[idx];
-          status[idx]    =(quantity[idx]<=10 )? "Low Stock" : "Available";
-          if(quantity[idx]==0) status[idx]="Out of Stock";
+          quantity[index_] -=sellQty;
+          soldQty[index_]  +=sellQty;
+          totalSale[index_]+=sellQty * sellPrice[index_];
+          status[index_]    =(quantity[index_]<=10 )? "Low Stock" : "Available";
+          if(quantity[index_]==0) status[index_]="Out of Stock";
           cout<<"\n ==== SALE RECEIPT ====" <<endl;
-          cout << "  Product   : " << productName[idx] << endl;
+          cout << "  Product   : " << productName[index_] << endl;
           cout << "  Qty Sold  : " << sellQty << endl;
-          cout << "  Price/Unit: Rs. " << sellPrice[idx] << endl;
-          cout << "  Total     : Rs. " << sellQty * sellPrice[idx] << endl;
-          cout << "  Remaining : " << quantity[idx] << endl;
+          cout << "  Price/Unit: Rs. " << sellPrice[index_] << endl;
+          cout << "  Total     : Rs. " << sellQty * sellPrice[index_] << endl;
+          cout << "  Remaining : " << quantity[index_] << endl;
           cout << "  ========================" << endl;
-            }
+            saveData(); 
+          }
+            
          
           //----Option 7----
           void salesReport()
@@ -379,9 +453,10 @@ using namespace std;
             case 7:  salesReport();        break;
             case 8:  lowStockReport();     break;
             case 9:  profitReport();       break;
-            case 10:
+            
                 cout << "Logging out..." << endl;
                 getch();
+                
                 return;
             default:
                 cout << "Wrong option selected!" << endl;
@@ -483,7 +558,9 @@ using namespace std;
  
         cout << "Total Bill: Rs. " << buyQty * sellPrice[idx] << endl;
         cout << "Thank you for shopping!" << endl;
+        saveData();
        }
+      
  
          // ---- Option 6 ----
          void viewByCategory()
@@ -555,6 +632,7 @@ using namespace std;
         cout << "Address   : " << shopAddress << endl;
         cout << "Phone     : " << shopPhone   << endl;
         cout << "Email     : " << shopEmail   << endl;
+        saveData();
         }
  
         // ---- Customer Menu Loop ----
@@ -604,6 +682,8 @@ using namespace std;
 // ============================================================
 int main()
 {
+        cout<<"\n Loading data..."<<endl;
+        loadData();
     while (true)
     {
         cout << "==================================" << endl;
@@ -628,6 +708,9 @@ int main()
         }
         else if (userOption == 3)
         {
+          cout<<"\n Saving data before exit..."<<endl;
+          saveData();
+
             break;
         }
         else
